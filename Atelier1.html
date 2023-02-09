@@ -1,0 +1,100 @@
+<!-- Émeric Bergevin Atelier 1 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier 1</title>
+</head>
+
+<body>
+    <h1>Ventes 2020</h1>
+    <div id="graphContainer" style="margin:auto;"></div>
+    <script defer>
+        const svgns = "http://www.w3.org/2000/svg";
+        let viewPortMaxUnitX = 1000;
+        let viewPortMaxUnitY = 1000;
+        let viewport = null;
+        let compteur = 12;
+        let mois = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+        let ventes = [6500, 5550, 4200, 4525, 2500, 1500, 500, 1000, 1750, 2300, 3700, 3500];
+        let compteurY = 300;
+        init_UI();
+        function rect(x, y, width, height, fill = "white", stroke = "black", strokeWidth = 1) {
+            let rect = document.createElementNS(svgns, "rect");
+            rect.setAttribute("x", x); rect.setAttribute("y", y);
+            rect.setAttribute("width", width); rect.setAttribute("height", height);
+            rect.setAttribute("fill", fill); rect.setAttribute("stroke", stroke);
+            rect.setAttribute("stroke-width", strokeWidth);
+            return rect;
+        }
+        function text(x, y, content, angle = 0, size = "1", fill = "black") {
+            let text = document.createElementNS(svgns, "text");
+            text.setAttribute("x", x); text.setAttribute("y", y);
+            text.setAttribute("transform", `rotate(${angle},${x},${y})`);
+            text.setAttribute("font-size", size + "em");
+            text.setAttribute("fill", fill);
+            text.innerHTML = content;
+            return text;
+        }
+        function line(x1, y1, x2, y2, stroke = "black", strokeWidth = 1) {
+            let line = document.createElementNS(svgns, "line");
+            line.setAttribute("x1", x1); line.setAttribute("y1", y1);
+            line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+            line.setAttribute("stroke", stroke);
+            line.setAttribute("stroke-width", strokeWidth);
+            return line;
+        }
+        function init_UI() {
+            insertViewPort("graphContainer");
+            dessinerGraphique();
+        }
+        function insertViewPort(containerId) {
+            viewport = document.createElementNS(svgns, "svg");
+            viewport.setAttribute("id", "viewport");
+            viewport.setAttribute("viewBox", "0 0 " + viewPortMaxUnitX + " " + viewPortMaxUnitY);
+            document.getElementById(containerId).appendChild(viewport);
+        }
+        function dessinerGraphique(){
+            viewport.appendChild(line(100,100, 100, 900, 'black', 2)) 
+            viewport.appendChild(line(100, 900, 900, 900, "black", 2))
+            let valeurMax = 7001
+            let grosseurGraphique = 820
+            let nombreMois = 12
+            let colonne = valeurMax / 100
+            let colonneLargeur = grosseurGraphique / colonne
+            let colonneY = 900
+            for (let i = 0; i < colonne; i++)
+            {
+                if(i % 10 == 0){
+                    viewport.appendChild(line(100, colonneY, 900, colonneY,'black', 2))
+                    viewport.appendChild(text(25, colonneY + 5,"$ " + (i * 100), 0, 1.5, "black"))
+                }
+                else {
+                    viewport.appendChild(line(100, colonneY, 900, colonneY, 'black',1))
+                }
+                colonneY -= colonneLargeur
+            }
+            let largeurBarre = ( grosseurGraphique / nombreMois ) - 10
+            X = 100
+            let indiceMois = 0 
+            mois.forEach(m => {
+                var color = "green";
+                if(ventes[indiceMois] <= 4500)  
+                    color = "yellow"
+                if(ventes[indiceMois] <= 1000)  
+                    color = "red"
+                valeurX = X;
+                X += (largeurBarre + 10);
+                barHeight = (800 * ventes[indiceMois] / valeurMax)
+                viewport.appendChild(rect(valeurX,(850-barHeight), 50,(barHeight + 50) , color, "black", 1))
+                viewport.appendChild(text(valeurX,920,m,20,1.5,"black"))
+                indiceMois += 1
+            }); 
+        }
+    </script>
+</body>
+
+</html>
